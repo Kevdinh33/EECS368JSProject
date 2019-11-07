@@ -18,8 +18,8 @@ let playerTurn  = 'black'
 let firstMouseClick = true
 
 let firstClickedPiece = null
-let firstClickX = 0
-let firstClickY = 0
+let firstClickCol = 0
+let firstClickRow = 0
 
 let c=document.getElementById("myCanvas");
 // "2d" gives a two-dimensional rendering context.
@@ -42,22 +42,22 @@ document.addEventListener("DOMContentLoaded", () => {
 //0 has no piece
 //1 has player 1 piece
 //2 has player 2 piece
-let square = function(color, x, y){
+let square = function(color, row, col){
 	this.dimen = 70
 	this.color = color
-	this.coordX = x
-	this.coordY = y
+	this.col = col
+	this.row = row
 	this.active = false
 	this.piece = -1
 	this.pieceColor = null
 }
 
-let checker = function(color, x, y){
+let checker = function(color, row, col){
 	this.color = color
 	this.king = false
 	this.active = true
-	this.coordX = x
-	this.coordY = y
+	this.col = col
+	this.row = row
 }
 // black becomes king at x = 0 and red hits king at x = 7
 
@@ -89,18 +89,22 @@ c.addEventListener('mouseup', function(e){
 //----------------------------------------------------------------------------//
 //---------------------------Game Loop----------------------------------------//
 
-masterUpdate = function(x,y){
-	// console.log("x position " + x)
-	// console.log("y position " + y)
+masterUpdate = function(col,row){
 
-	let gridX = Math.floor(x/70)
-	let gridY = Math.floor(y/70)
+	console.log("Player Turn: " + playerTurn)
+
+
+	col = Math.floor(col/70)
+	row = Math.floor(row/70)
+
+	console.log("col: " + col)
+	console.log("row: " + row)
 
 
 	if(firstMouseClick)
-		firstClick(gridX, gridY)
+		firstClick(row, col)
 	else
-		secondClick(gridX, gridY)
+		secondClick(row, col)
 
 	paint()
 	pieceUpdate(checkersPerTeam)
@@ -110,21 +114,22 @@ masterUpdate = function(x,y){
 //---------------------------Functions----------------------------------------//
 
 //the values coming in are grid values
-firstClick = function(gridX,gridY){
-	if(checkerBoardArray[gridX][gridY].active == false){
+firstClick = function(row, col){
+
+	if(checkerBoardArray[row][col].active == false){
 		console.log("Tried to click inactive square")
 	}
-	else if(checkerBoardArray[gridX][gridY].pieceColor != playerTurn){
+	else if(checkerBoardArray[row][col].pieceColor != playerTurn){
 		console.log("Wrong player color")
 	}
 
 
 
-	if(checkerBoardArray[gridX][gridY].active == true){
-		if(checkerBoardArray[gridX][gridY].pieceColor == playerTurn){
-			firstClickX = gridX
-			firstClickY = gridY
-			firstClickIndex = checkerBoardArray[gridX][gridY].piece
+	if(checkerBoardArray[row][col].active == true){
+		if(checkerBoardArray[row][col].pieceColor == playerTurn){
+			firstClickCol = col
+			firstClickRow = row
+			firstClickIndex = checkerBoardArray[row][col].piece
 			firstMouseClick = false
 			console.log("First click successful")
 		}
@@ -133,40 +138,142 @@ firstClick = function(gridX,gridY){
 
 
 // A lot of if statements here, I tried to make them clear
-secondClick = function(gridX, gridY){
-
+secondClick = function(row, col){
+	let success = true
 	//see if the clicked square is currently active, if so the move fails always
-	if(checkerBoardArray[gridX][gridY].active){
+	if(checkerBoardArray[row][col].active){
 		console.log("Tried to move onto another piece")
 		firstMouseClick = true
+		success = false
 	}
-	else if(checkerBoardArray[gridX][gridY].color == 'white'){
+	else if(checkerBoardArray[row][col].color == 'white'){
 		console.log("Tried to move onto white space")
 		firstMouseClick = true
+		success = false
+	}
+	//black, non king backwards move
+	//Remember, up is down
+	else if(playerTurn == 'black' && row > firstClickRow && !blackCheckerArray[firstClickIndex].king){
+		console.log("Tried to move backwards")
+		firstMouseClick = true
+		success = false
 	}
 
-	else{
-		console.log("Successful move")
-		checkerBoardArray[gridX][gridY].active = true
-		checkerBoardArray[gridX][gridY].piece = firstClickIndex
-		checkerBoardArray[gridX][gridY].pieceColor = playerTurn
+	//red, non king backwards move
+	//Remember, up is down
+	else if(playerTurn == 'red' && row < firstClickRow && !redCheckerArray[firstClickIndex].king){
+		console.log("Tried to move backwards")
+		firstMouseClick = true
+		success = false
+	}
 
-		checkerBoardArray[firstClickX][firstClickY].active = false
-		checkerBoardArray[firstClickX][firstClickY].piece = -1
-		checkerBoardArray[firstClickX][firstClickY].pieceColor = null
+	//out o bounds
+	//doesn't happen my dude with the current grid click setup
+
+	//jump?
+	//success is in here incase one of the more obvious cases failed above
+	if(playerTurn == 'black' && row < firstClickRow && success){
+
+		if(row == firstClickRow - 2){ //  || (col == firstClickCol + 2 && blackCheckerArray[firstClickIndex].king)
+
+			//jump upLeft
+			//up is to subtract from firstClickRow
+			//left is to subtract from firstClickCol
+			if(col == firstClickCol - 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				if(checkerBoardArray[firstClickRow - 1][firstClickCol - 1].active && checkerBoardArray[firstClickRow - 1][firstClickCol - 1].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[firstClickRow - 1][firstClickCol - 1].piece
+					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].active = false
+					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].piece = -1
+					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+			//jump upRight
+			//up is to subtract from firstClickRow
+			//right is to add to firstClickCol
+			else if(col == firstClickCol + 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				if(checkerBoardArray[firstClickRow - 1][firstClickCol + 1].active && checkerBoardArray[firstClickRow - 1][firstClickCol + 1].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[firstClickRow - 1][firstClickCol + 1].piece
+					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].active = false
+					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].piece = -1
+					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+		}
+	}
+
+	if(playerTurn == 'red' && row > firstClickRow && success){
+
+		if(row == firstClickRow + 2){ //  || (col == firstClickCol + 2 && blackCheckerArray[firstClickIndex].king)
+
+			//jump downLeft
+			//down is to add from firstClickRow
+			//left is to subtract from firstClickCol
+			if(col == firstClickCol - 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				if(checkerBoardArray[firstClickRow + 1][firstClickCol - 1].active && checkerBoardArray[firstClickRow + 1][firstClickCol - 1].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[firstClickRow + 1][firstClickCol - 1].piece
+					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].active = false
+					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].piece = -1
+					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+			//jump upRight
+			//down is to add from firstClickRow
+			//right is to add to firstClickCol
+			else if(col == firstClickCol + 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				if(checkerBoardArray[firstClickRow + 1][firstClickCol + 1].active && checkerBoardArray[firstClickRow + 1][firstClickCol + 1].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[firstClickRow + 1][firstClickCol + 1].piece
+					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].active = false
+					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].piece = -1
+					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+		}
+	}
+
+
+
+	if(success){
+		console.log("Successful move")
+		checkerBoardArray[row][col].active = true
+		checkerBoardArray[row][col].piece = firstClickIndex
+		checkerBoardArray[row][col].pieceColor = playerTurn
+
+		checkerBoardArray[firstClickRow][firstClickCol].active = false
+		checkerBoardArray[firstClickRow][firstClickCol].piece = -1
+		checkerBoardArray[firstClickRow][firstClickCol].pieceColor = null
 
 		firstMouseClick = true
 
 
 		if(playerTurn == 'red'){
-			redCheckerArray[firstClickIndex].coordX = gridX
-			redCheckerArray[firstClickIndex].coordY = gridY
+			redCheckerArray[firstClickIndex].row = row
+			redCheckerArray[firstClickIndex].col = col
 
 			playerTurn = 'black'
 		}
 		else{
-			blackCheckerArray[firstClickIndex].coordX = gridX
-			blackCheckerArray[firstClickIndex].coordY = gridY
+			blackCheckerArray[firstClickIndex].row = row
+			blackCheckerArray[firstClickIndex].col = col
 
 			playerTurn = 'red'
 		}
@@ -180,14 +287,14 @@ clear = function(square){
 
 boardCreate = function(){
 	ctx.fillStyle = 'grey'
-	for(let i = 0 ; i < grid ; i++){
-		for(let j = 0 ; j < grid ; j++){
-			ctx.moveTo(0,70*j);
-			ctx.lineTo(560,70*j);
+	for(let row = 0 ; row < grid ; row++){
+		for(let col = 0 ; col < grid ; col++){
+			ctx.moveTo(0,70*col);
+			ctx.lineTo(560,70*col);
 			ctx.stroke();
 
-			ctx.moveTo(70*i,0);
-			ctx.lineTo(70*i,560);
+			ctx.moveTo(70*row,0);
+			ctx.lineTo(70*row,560);
 			ctx.stroke();
 		}
 	}
@@ -195,20 +302,20 @@ boardCreate = function(){
 
 putPieces = function(){
 	let index = 0
-	for(let i = 0 ; i < 3 ; i++){
-		let j = 0
-		if(i%2==0) j = 1
-		for(j ; j<grid ; j+=2){
-			redCheckerArray[index] = new checker('red', j, i)
+	for(let row = 0 ; row < 3 ; row++){
+		let col = 0
+		if(row%2==0) col = 1
+		for(col ; col<grid ; col+=2){
+			redCheckerArray[index] = new checker('red', row, col)
 			index++
 		}
 	}
 	index = 0
-	for(let i = 5 ; i < grid ; i++){
-		let j = 0
-		if(i%2==0) j = 1
-		for(j ; j<grid ; j+=2){
-			blackCheckerArray[index] = new checker('black', j, i)
+	for(let row = 5 ; row < grid ; row++){
+		let col = 0
+		if(row%2==0) col = 1
+		for(col ; col<grid ; col+=2){
+			blackCheckerArray[index] = new checker('black', row, col)
 			index++
 		}
 	}
@@ -218,10 +325,10 @@ plaster = function(){
 	let grey = false
 	let color = 'white'
 
-	for(let i = 0 ; i < grid ; i++){
-		if(i % 2 == 0) grey = false
+	for(let row = 0 ; row < grid ; row++){
+		if(row % 2 == 0) grey = false
 		else grey = true
-		for(let j = 0 ; j < grid ; j++){
+		for(let col = 0 ; col < grid ; col++){
 
 			if(grey==true){
 				color = 'grey'
@@ -232,20 +339,20 @@ plaster = function(){
 				grey = true
 			}
 
-			checkerBoardArray[i][j] = new square(color, (j*70), (i*70))
+			checkerBoardArray[row][col] = new square(color, (col*70), (row*70))
 		}
 	}
 }
 
 paint = function(){
-	for(let i = 0 ; i < grid ; i++){
-		for(let j = 0 ; j < grid ; j++){
-			ctx.fillStyle = checkerBoardArray[i][j].color
+	for(let row = 0 ; row < grid ; row++){
+		for(let col = 0 ; col < grid ; col++){
+			ctx.fillStyle = checkerBoardArray[row][col].color
 
-			ctx.fillRect(checkerBoardArray[i][j].coordX,
-				checkerBoardArray[i][j].coordY,
-				checkerBoardArray[i][j].dimen,
-				checkerBoardArray[i][j].dimen)
+			ctx.fillRect(checkerBoardArray[row][col].col,
+				checkerBoardArray[row][col].row,
+				checkerBoardArray[row][col].dimen,
+				checkerBoardArray[row][col].dimen)
 		}
 	}
 }
@@ -261,27 +368,27 @@ pieceUpdate = function(numCheckers){
 	for(let i = 0 ; i < numCheckers ; i++){
 
 		if(redCheckerArray[i].active == true){
-			X = redCheckerArray[i].coordX * 70
-			Y = redCheckerArray[i].coordY * 70
+			X = redCheckerArray[i].col * 70
+			Y = redCheckerArray[i].row * 70
 			ctx.beginPath()
 			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
 			ctx.fillStyle = 'red'
 			ctx.fill()
-			checkerBoardArray[redCheckerArray[i].coordX][redCheckerArray[i].coordY].active = true
-			checkerBoardArray[redCheckerArray[i].coordX][redCheckerArray[i].coordY].piece = i
-			checkerBoardArray[redCheckerArray[i].coordX][redCheckerArray[i].coordY].pieceColor = 'red'
+			checkerBoardArray[redCheckerArray[i].row][redCheckerArray[i].col].active = true
+			checkerBoardArray[redCheckerArray[i].row][redCheckerArray[i].col].piece = i
+			checkerBoardArray[redCheckerArray[i].row][redCheckerArray[i].col].pieceColor = 'red'
 		}
 
 		if(blackCheckerArray[i].active == true){
-			X = blackCheckerArray[i].coordX * 70
-			Y = blackCheckerArray[i].coordY * 70
+			X = blackCheckerArray[i].col * 70
+			Y = blackCheckerArray[i].row * 70
 			ctx.beginPath()
 			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
 			ctx.fillStyle = 'black'
 			ctx.fill()
-			checkerBoardArray[blackCheckerArray[i].coordX][blackCheckerArray[i].coordY].active = true
-			checkerBoardArray[blackCheckerArray[i].coordX][blackCheckerArray[i].coordY].piece = i
-			checkerBoardArray[blackCheckerArray[i].coordX][blackCheckerArray[i].coordY].pieceColor = 'black'
+			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].active = true
+			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].piece = i
+			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].pieceColor = 'black'
 		}
 	}
 }
