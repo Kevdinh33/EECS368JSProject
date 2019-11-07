@@ -54,7 +54,7 @@ let square = function(color, row, col){
 
 let checker = function(color, row, col){
 	this.color = color
-	this.king = false
+	this.king = true
 	this.active = true
 	this.col = col
 	this.row = row
@@ -183,11 +183,14 @@ secondClick = function(row, col){
 
 				//successful jump :)
 				//need to clear the jumped piece
-				if(checkerBoardArray[firstClickRow - 1][firstClickCol - 1].active && checkerBoardArray[firstClickRow - 1][firstClickCol - 1].pieceColor == 'red'){
-					let indexToDelete = checkerBoardArray[firstClickRow - 1][firstClickCol - 1].piece
-					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].active = false
-					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].piece = -1
-					checkerBoardArray[firstClickRow - 1][firstClickCol - 1].pieceColor = null
+				let jCol = firstClickRow - 1
+				let jRow = firstClickCol - 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
 
 					redCheckerArray[indexToDelete].active = false
 				}
@@ -199,11 +202,14 @@ secondClick = function(row, col){
 
 				//successful jump :)
 				//need to clear the jumped piece
-				if(checkerBoardArray[firstClickRow - 1][firstClickCol + 1].active && checkerBoardArray[firstClickRow - 1][firstClickCol + 1].pieceColor == 'red'){
-					let indexToDelete = checkerBoardArray[firstClickRow - 1][firstClickCol + 1].piece
-					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].active = false
-					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].piece = -1
-					checkerBoardArray[firstClickRow - 1][firstClickCol + 1].pieceColor = null
+				let jCol = firstClickCol + 1
+				let jRow = firstClickRow - 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
 
 					redCheckerArray[indexToDelete].active = false
 				}
@@ -222,13 +228,16 @@ secondClick = function(row, col){
 
 				//successful jump :)
 				//need to clear the jumped piece
-				if(checkerBoardArray[firstClickRow + 1][firstClickCol - 1].active && checkerBoardArray[firstClickRow + 1][firstClickCol - 1].pieceColor == 'red'){
-					let indexToDelete = checkerBoardArray[firstClickRow + 1][firstClickCol - 1].piece
-					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].active = false
-					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].piece = -1
-					checkerBoardArray[firstClickRow + 1][firstClickCol - 1].pieceColor = null
+				let jRow = firstClickRow + 1
+				let jCol = firstClickCol - 1
 
-					redCheckerArray[indexToDelete].active = false
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					blackCheckerArray[indexToDelete].active = false
 				}
 			}
 			//jump upRight
@@ -238,13 +247,16 @@ secondClick = function(row, col){
 
 				//successful jump :)
 				//need to clear the jumped piece
-				if(checkerBoardArray[firstClickRow + 1][firstClickCol + 1].active && checkerBoardArray[firstClickRow + 1][firstClickCol + 1].pieceColor == 'red'){
-					let indexToDelete = checkerBoardArray[firstClickRow + 1][firstClickCol + 1].piece
-					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].active = false
-					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].piece = -1
-					checkerBoardArray[firstClickRow + 1][firstClickCol + 1].pieceColor = null
+				let jRow = firstClickRow + 1
+				let jCol = firstClickCol + 1
 
-					redCheckerArray[indexToDelete].active = false
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					blackCheckerArray[indexToDelete].active = false
 				}
 			}
 		}
