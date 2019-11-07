@@ -1,13 +1,30 @@
 document.addEventListener("DOMContentLoaded", () => {
-    init()
+	boardCreate()
+	rePaint()
+	putPieces()
+	pieceUpdate()
 })
 
 let c=document.getElementById("myCanvas");
+
+let redCheckerArray = []
+let blackCheckerArray = []
 
 
 //0 has no piece
 //1 has player 1 piece
 //2 has player 2 piece
+
+let boardArray = [
+	[0,1,0,1,0,1,0,1],
+	[1,0,1,0,1,0,1,0],
+	[0,1,0,1,0,1,0,1],
+	[1,0,1,0,1,0,1,0],
+	[0,1,0,1,0,1,0,1],
+	[1,0,1,0,1,0,1,0],
+	[0,1,0,1,0,1,0,1],
+	[1,0,1,0,1,0,1,0],
+]
 
 let piecesArray = [
 	[0,1,0,1,0,1,0,1],
@@ -20,9 +37,30 @@ let piecesArray = [
 	[2,0,2,0,2,0,2,0]
 ]
 
+let checker = function(color, x, y){
+	this.color = color
+	this.king = false
+	this.active = true
+	this.coordX = x
+	this.coordY = y
+}
+checker.prototype.movePos = function(x,y){
+	this.coordX = x
+	this.coordY = y
+}
+// black becomes king at x = 0 and red hits king at x = 7
+checker.prototype.isKing = function(){
+	if(this.color == 'black'){
+		this.king = true
+	}
+	if(this.color = 'red'){
+		this.king = true
+	}
+}
+
 let player1Pieces = 8
 let player2Pieces = 8
-let playerTurner  = 1
+let playerTurn  = 1
 
 // "2d" gives a two-dimensional rendering context.
 let ctx=c.getContext("2d");
@@ -54,14 +92,13 @@ masterUpdate = function(x,y){
 	console.log("x position " + x)
 	console.log("y position " + y)
 
-
-
-	update()
+	rePaint()
+	pieceUpdate()
 }
 
 
 
-init = function(){
+boardCreate = function(){
 	ctx.fillStyle = 'grey'
 	for(let i = 0 ; i < 8 ; i++){
 		for(let j = 0 ; j < 8 ; j++){
@@ -74,22 +111,48 @@ init = function(){
 			ctx.stroke();
 		}
 	}
-	update()
 }
 
-update = function(){
+putPieces = function(){
+	let index = 0
+	for(let i = 0 ; i < 2 ; i++){
+		let j = 0
+		if(i%2==0) j = 1
+		for(j ; j<8 ; j+=2){
+			redCheckerArray[index] = new checker('red', j, i)
+			index++
+		}
+	}
+	index = 0
+	for(let i = 6 ; i < 8 ; i++){
+		let j = 0
+		if(i%2==0) j = 1
+		for(j ; j<8 ; j+=2){
+			blackCheckerArray[index] = new checker('black', j, i)
+			index++
+		}
+	}
+}
+
+rePaint = function(){
 	let left = 0;
 	let startX = 0;
 	ctx.fillStyle = 'grey'
 
 	for(let i = 0 ; i < 8 ; i++){
-		for(let j = 0 ; j < 8 ; j += 2){
-			startX = j * 70;
-			if(i%2==0) startX = (j+1) * 70;
-			ctx.fillRect(startX + left,(i*70) ,70,70);
+		let j = 0
+		if(i%2==0) j = 1
+		for(j ; j < 8 ; j+=2){
+
+			//should be an unnecessary check if the math is Right
+			//but if we should want to extend later on this might be useful
+			if(boardArray[i][j] == 1){
+				startX = j * 70;
+				ctx.fillRect(startX + left,(i*70) ,70,70);
+			}
+			else;
 		}
 	}
-	pieceUpdate()
 }
 
 pieceUpdate = function(){
@@ -102,25 +165,28 @@ pieceUpdate = function(){
 
 
 	for(let i = 0 ; i < 8 ; i++){
-		let j = 0
-		if(i%2==0) j = 1
-		for(j ; j < 8 ; j+=2){
-			//no pieces
-			let piece = piecesArray[i][j]
-			if(piece == 0);
-			else {
-				X = j * 70
-				Y = i * 70
-				ctx.beginPath()
-				ctx.arc(X+35, Y+35, R, sAngle, eAngle)
-				if(piece == 1)
-					ctx.fillStyle = 'red'
-				else if(piece == 2)
-					ctx.fillStyle = 'black'
-				else
-					ctx.fillStyle = 'grey'
-			}
+
+		if(redCheckerArray[i].active == true){
+			console.log("redCheckerArrayX " + i + "= " + redCheckerArray[i].coordX)
+			X = redCheckerArray[i].coordX * 70
+			Y = redCheckerArray[i].coordY * 70
+			ctx.beginPath()
+			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
+			ctx.fillStyle = 'red'
+			ctx.fill()
+		}
+
+		if(blackCheckerArray[i].active == true){
+			X = blackCheckerArray[i].coordX * 70
+			Y = blackCheckerArray[i].coordY * 70
+			ctx.beginPath()
+			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
+			ctx.fillStyle = 'black'
 			ctx.fill()
 		}
 	}
+
+
+
+
 }
