@@ -54,7 +54,7 @@ let square = function(color, row, col){
 
 let checker = function(color, row, col){
 	this.color = color
-	this.king = true
+	this.king = false
 	this.active = true
 	this.col = col
 	this.row = row
@@ -91,15 +91,11 @@ c.addEventListener('mouseup', function(e){
 
 masterUpdate = function(col,row){
 
-	console.log("Player Turn: " + playerTurn)
-
-
 	col = Math.floor(col/70)
 	row = Math.floor(row/70)
 
-	console.log("col: " + col)
-	console.log("row: " + row)
-
+	// console.log("col: " + col)
+	// console.log("row: " + row)
 
 	if(firstMouseClick)
 		firstClick(row, col)
@@ -108,6 +104,7 @@ masterUpdate = function(col,row){
 
 	paint()
 	pieceUpdate(checkersPerTeam)
+	console.log("Player Turn: " + playerTurn)
 }
 
 //----------------------------------------------------------------------------//
@@ -131,7 +128,7 @@ firstClick = function(row, col){
 			firstClickRow = row
 			firstClickIndex = checkerBoardArray[row][col].piece
 			firstMouseClick = false
-			console.log("First click successful")
+			//console.log("First click successful")
 		}
 	}
 }
@@ -172,9 +169,12 @@ secondClick = function(row, col){
 
 	//jump?
 	//success is in here incase one of the more obvious cases failed above
-	if(playerTurn == 'black' && row < firstClickRow && success){
 
-		if(row == firstClickRow - 2){ //  || (col == firstClickCol + 2 && blackCheckerArray[firstClickIndex].king)
+	//simple black jumpss
+	if(playerTurn == 'black' && row < firstClickRow && success){
+		console.log("Black Simple Jump")
+		//moving up
+		if(row == firstClickRow - 2){
 
 			//jump upLeft
 			//up is to subtract from firstClickRow
@@ -217,7 +217,53 @@ secondClick = function(row, col){
 		}
 	}
 
+	//Black King jumps
+	if(playerTurn == 'black' && row > firstClickRow && success && blackCheckerArray[firstClickIndex].king){
+		console.log("Black King Jump")
+		//moving down
+		if(row == firstClickRow + 2){
+			//downLeft
+			if(col == firstClickCol - 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				let jRow = firstClickRow + 1
+				let jCol = firstClickCol - 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+			//downRight
+			//down is to add from firstClickRow
+			//right is to add to firstClickCol
+			else if(col == firstClickCol + 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				let jRow = firstClickRow + 1
+				let jCol = firstClickCol + 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					redCheckerArray[indexToDelete].active = false
+				}
+			}
+		}
+	}
+
+	//Red simple jumps
 	if(playerTurn == 'red' && row > firstClickRow && success){
+		console.log("Red Simple Jump")
 
 		if(row == firstClickRow + 2){ //  || (col == firstClickCol + 2 && blackCheckerArray[firstClickIndex].king)
 
@@ -240,7 +286,7 @@ secondClick = function(row, col){
 					blackCheckerArray[indexToDelete].active = false
 				}
 			}
-			//jump upRight
+			//jump downRight
 			//down is to add from firstClickRow
 			//right is to add to firstClickCol
 			else if(col == firstClickCol + 2){
@@ -262,7 +308,54 @@ secondClick = function(row, col){
 		}
 	}
 
+	//Red King jumps
+	if(playerTurn == 'red' && row < firstClickRow && success && redCheckerArray[firstClickIndex].king){
+		console.log("Red King Jump")
+		//moving up
+		if(row == firstClickRow - 2){
 
+			//jump upLeft
+			//up is to subtract from firstClickRow
+			//left is to subtract from firstClickCol
+			if(col == firstClickCol - 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				let jCol = firstClickCol - 1
+				let jRow = firstClickRow - 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					blackCheckerArray[indexToDelete].active = false
+					console.log("should be deleting a blackChecker")
+				}
+			}
+			//jump upRight
+			//up is to subtract from firstClickRow
+			//right is to add to firstClickCol
+			else if(col == firstClickCol + 2){
+
+				//successful jump :)
+				//need to clear the jumped piece
+				let jCol = firstClickCol + 1
+				let jRow = firstClickRow - 1
+
+				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
+					let indexToDelete = checkerBoardArray[jRow][jCol].piece
+					checkerBoardArray[jRow][jCol].active = false
+					checkerBoardArray[jRow][jCol].piece = -1
+					checkerBoardArray[jRow][jCol].pieceColor = null
+
+					blackCheckerArray[indexToDelete].active = false
+					console.log("should be deleting a blackChecker")
+				}
+			}
+		}
+	}
 
 	if(success){
 		console.log("Successful move")
