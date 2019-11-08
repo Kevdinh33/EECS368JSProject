@@ -69,7 +69,7 @@ c.addEventListener('mouseup', function(e){
     switch (e.button) {
       case 0:
 				let canvas = c.getBoundingClientRect()
-
+				
 				//the math is for figuring relative mouse location to the canvas
         masterUpdate(e.clientX-canvas.left-borderWidth, e.clientY-canvas.top-borderWidth)
 				//console.log('Left button clicked.')
@@ -127,8 +127,12 @@ firstClick = function(row, col){
 			firstClickCol = col
 			firstClickRow = row
 			firstClickIndex = checkerBoardArray[row][col].piece
+			if(playerTurn == 'black'){
+				blackCheckerArray[firstClickIndex].color = 'yellow'
+			}else
+				redCheckerArray[firstClickIndex].color = 'yellow'
 			firstMouseClick = false
-			//console.log("First click successful")
+			console.log("col: " + col +" row: " + row)
 		}
 	}
 }
@@ -136,6 +140,11 @@ firstClick = function(row, col){
 
 // A lot of if statements here, I tried to make them clear
 secondClick = function(row, col){
+	if(playerTurn == 'black'){
+		blackCheckerArray[firstClickIndex].color = 'black'
+	}else
+		redCheckerArray[firstClickIndex].color = 'red'
+
 	let success = true
 	//see if the clicked square is currently active, if so the move fails always
 	if(checkerBoardArray[row][col].active){
@@ -385,7 +394,7 @@ secondClick = function(row, col){
 	}
 }
 
-clear = function(square){
+clear = function(){
 	this.active = false
 	this.piece = null
 }
@@ -477,7 +486,7 @@ pieceUpdate = function(numCheckers){
 			Y = redCheckerArray[i].row * 70
 			ctx.beginPath()
 			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
-			ctx.fillStyle = 'red'
+			ctx.fillStyle = redCheckerArray[i].color
 			ctx.fill()
 			checkerBoardArray[redCheckerArray[i].row][redCheckerArray[i].col].active = true
 			checkerBoardArray[redCheckerArray[i].row][redCheckerArray[i].col].piece = i
@@ -489,7 +498,7 @@ pieceUpdate = function(numCheckers){
 			Y = blackCheckerArray[i].row * 70
 			ctx.beginPath()
 			ctx.arc(X+35, Y+35, R, sAngle, eAngle)
-			ctx.fillStyle = 'black'
+			ctx.fillStyle = blackCheckerArray[i].color
 			ctx.fill()
 			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].active = true
 			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].piece = i
