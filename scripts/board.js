@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	paint()
 	putPieces()
 	pieceUpdate(checkersPerTeam)
+	currentPlayer()
 })
 
 //----------------------------------------------------------------------------//
@@ -104,6 +105,7 @@ masterUpdate = function(col,row){
 
 	paint()
 	pieceUpdate(checkersPerTeam)
+	currentPlayer()
 	console.log("Player Turn: " + playerTurn)
 }
 
@@ -508,4 +510,8 @@ pieceUpdate = function(numCheckers){
 			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].pieceColor = 'black'
 		}
 	}
+}
+
+function currentPlayer(){
+	document.getElementById('playerTurn').innerHTML = playerTurn
 }
