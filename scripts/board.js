@@ -69,7 +69,7 @@ c.addEventListener('mouseup', function(e){
     switch (e.button) {
       case 0:
 				let canvas = c.getBoundingClientRect()
-				
+
 				//the math is for figuring relative mouse location to the canvas
         masterUpdate(e.clientX-canvas.left-borderWidth, e.clientY-canvas.top-borderWidth)
 				//console.log('Left button clicked.')
@@ -132,7 +132,6 @@ firstClick = function(row, col){
 			}else
 				redCheckerArray[firstClickIndex].color = 'yellow'
 			firstMouseClick = false
-			console.log("col: " + col +" row: " + row)
 		}
 	}
 }
@@ -172,6 +171,7 @@ secondClick = function(row, col){
 		firstMouseClick = true
 		success = false
 	}
+
 
 	//out o bounds
 	//doesn't happen my dude with the current grid click setup
@@ -368,6 +368,9 @@ secondClick = function(row, col){
 
 	if(success){
 		console.log("Successful move")
+		console.log("firstClickRow :" + firstClickRow)
+		console.log("firstClickCol :" + firstClickCol)
+
 		checkerBoardArray[row][col].active = true
 		checkerBoardArray[row][col].piece = firstClickIndex
 		checkerBoardArray[row][col].pieceColor = playerTurn
