@@ -106,7 +106,7 @@ masterUpdate = function(col,row){
 	paint()
 	pieceUpdate(checkersPerTeam)
 	currentPlayer()
-	console.log("Player Turn: " + playerTurn)
+	//console.log("Player Turn: " + playerTurn)
 }
 
 //----------------------------------------------------------------------------//
@@ -185,17 +185,19 @@ secondClick = function(row, col){
 	if(playerTurn == 'black' && row < firstClickRow && success){
 		console.log("Black Simple Jump")
 		//moving up
-		if(row == firstClickRow - 2){
 
+		if(row == firstClickRow - 2){
 			//jump upLeft
 			//up is to subtract from firstClickRow
 			//left is to subtract from firstClickCol
+
 			if(col == firstClickCol - 2){
 
 				//successful jump :)
 				//need to clear the jumped piece
-				let jCol = firstClickRow - 1
-				let jRow = firstClickCol - 1
+				let jRow = firstClickRow - 1
+				let jCol = firstClickCol - 1
+				//console.log("is red active " + checkerBoardArray[jRow][jCol].active)
 
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
@@ -215,6 +217,8 @@ secondClick = function(row, col){
 				//need to clear the jumped piece
 				let jCol = firstClickCol + 1
 				let jRow = firstClickRow - 1
+
+				console.log("is red active " + checkerBoardArray[jRow][jCol].active)
 
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
@@ -241,6 +245,8 @@ secondClick = function(row, col){
 				let jRow = firstClickRow + 1
 				let jCol = firstClickCol - 1
 
+				console.log("is red active " + checkerBoardArray[jRow][jCol].active)
+
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
 					checkerBoardArray[jRow][jCol].active = false
@@ -259,6 +265,8 @@ secondClick = function(row, col){
 				//need to clear the jumped piece
 				let jRow = firstClickRow + 1
 				let jCol = firstClickCol + 1
+
+				console.log("is red active " + checkerBoardArray[jRow][jCol].active)
 
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'red'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
@@ -288,6 +296,8 @@ secondClick = function(row, col){
 				let jRow = firstClickRow + 1
 				let jCol = firstClickCol - 1
 
+				console.log("is black active " + checkerBoardArray[jRow][jCol].active)
+
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
 					checkerBoardArray[jRow][jCol].active = false
@@ -306,6 +316,8 @@ secondClick = function(row, col){
 				//need to clear the jumped piece
 				let jRow = firstClickRow + 1
 				let jCol = firstClickCol + 1
+
+				console.log("is black active " + checkerBoardArray[jRow][jCol].active)
 
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
@@ -335,6 +347,8 @@ secondClick = function(row, col){
 				let jCol = firstClickCol - 1
 				let jRow = firstClickRow - 1
 
+				console.log("is black active " + checkerBoardArray[jRow][jCol].active)
+
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
 					checkerBoardArray[jRow][jCol].active = false
@@ -355,6 +369,8 @@ secondClick = function(row, col){
 				let jCol = firstClickCol + 1
 				let jRow = firstClickRow - 1
 
+				console.log("is black active " + checkerBoardArray[jRow][jCol].active)
+
 				if(checkerBoardArray[jRow][jCol].active && checkerBoardArray[jRow][jCol].pieceColor == 'black'){
 					let indexToDelete = checkerBoardArray[jRow][jCol].piece
 					checkerBoardArray[jRow][jCol].active = false
@@ -370,8 +386,8 @@ secondClick = function(row, col){
 
 	if(success){
 		console.log("Successful move")
-		console.log("firstClickRow :" + firstClickRow)
-		console.log("firstClickCol :" + firstClickCol)
+		// console.log("firstClickRow :" + firstClickRow)
+		// console.log("firstClickCol :" + firstClickCol)
 
 		checkerBoardArray[row][col].active = true
 		checkerBoardArray[row][col].piece = firstClickIndex
@@ -382,7 +398,6 @@ secondClick = function(row, col){
 		checkerBoardArray[firstClickRow][firstClickCol].pieceColor = null
 
 		firstMouseClick = true
-
 
 		if(playerTurn == 'red'){
 			redCheckerArray[firstClickIndex].row = row
