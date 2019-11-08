@@ -6,13 +6,11 @@ let blackCheckerArray = []
 let checkerBoardArray = [
 	[], [], [], [], [], [], [], []
 ]
-let checkersPerTeam = 12
+let numCheckers = 12
 let numberOfSquare = 64
 let grid = 8
 let borderWidth = 4
 
-let player1Pieces = 12
-let player2Pieces = 12
 let playerTurn  = 'black'
 
 let firstMouseClick = true
@@ -33,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	plaster()
 	paint()
 	putPieces()
-	pieceUpdate(checkersPerTeam)
+	pieceUpdate(numCheckers)
 	currentPlayer()
 })
 
@@ -101,8 +99,9 @@ masterUpdate = function(col,row){
 		secondClick(row, col)
 
 	paint()
-	pieceUpdate(checkersPerTeam)
+	pieceUpdate(numCheckers)
 	currentPlayer()
+	checkEndGame(numCheckers)
 }
 
 //----------------------------------------------------------------------------//
@@ -476,6 +475,29 @@ pieceUpdate = function(numCheckers){
 			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].piece = i
 			checkerBoardArray[blackCheckerArray[i].row][blackCheckerArray[i].col].pieceColor = 'black'
 		}
+	}
+}
+
+checkEndGame = function(){
+	let win = true
+	for(let i = 0 ; i < numCheckers ; i++){
+		if(redCheckerArray[i].active)
+			win = false
+	}
+	if(win){
+		document.getElementById('header').innerHTML = "Black Wins"
+		document.getElementById('playerTurn').innerHTML = ""
+		document.getElementById('header2').innerHTML = ""
+	}
+	win = true
+	for(let i = 0 ; i < numCheckers ; i++){
+		if(blackCheckerArray[i].active)
+			win = false
+	}
+	if(win){
+		document.getElementById('header').innerHTML = "Red Wins"
+		document.getElementById('playerTurn').innerHTML = ""
+		document.getElementById('header2').innerHTML = ""
 	}
 }
 
