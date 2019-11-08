@@ -403,11 +403,19 @@ secondClick = function(row, col){
 			redCheckerArray[firstClickIndex].row = row
 			redCheckerArray[firstClickIndex].col = col
 
+			//Check Kings
+			if(row == grid - 1 && !redCheckerArray[firstClickIndex].king)
+				redCheckerArray[firstClickIndex].king = true
+
 			playerTurn = 'black'
 		}
 		else{
 			blackCheckerArray[firstClickIndex].row = row
 			blackCheckerArray[firstClickIndex].col = col
+
+			//Check Kings
+			if(row == 0 && !blackCheckerArray[firstClickIndex].king)
+				blackCheckerArray[firstClickIndex].king = true
 
 			playerTurn = 'red'
 		}
